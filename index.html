@@ -1,0 +1,1317 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta name="theme-color" content="#0B0B0B" />
+  <title>P.Q.P. — Pra Quem Pode</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <style>
+    :root{
+      --bg:#0B0B0B;
+      --fg:#F2F2F2;
+      --muted:#BDBDBD;
+      --cardBlack:#0B0B0B;
+      --cardWhite:#F7F7F7;
+      --ink:#111;
+      --stroke:#2A2A2A;
+      --shadow: 0 14px 35px rgba(0,0,0,.45);
+      --green:#20C997;
+      --green2:#14B87E;
+      --red:#FF3B30;
+      --red2:#D82F27;
+      --radius:20px;
+      --btnRadius:16px;
+      --pad: clamp(14px, 3vw, 22px);
+      --maxW: 520px;
+      --cardW: min(92vw, 480px);
+      --cardH: min(74vh, 560px);
+      --font: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Inter,Arial,Helvetica,sans-serif;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      background:var(--bg);
+      color:var(--fg);
+      font-family:var(--font);
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+    }
+    .app{
+      min-height:100%;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+    }
+    header{
+      width:100%;
+      position:sticky;
+      top:0;
+      z-index:10;
+      background: linear-gradient(to bottom, rgba(11,11,11,.95), rgba(11,11,11,.75));
+      backdrop-filter: blur(10px);
+      border-bottom:1px solid rgba(255,255,255,.06);
+    }
+    .topbar{
+      max-width:var(--maxW);
+      margin:0 auto;
+      padding: 10px var(--pad);
+      display:flex;
+      gap:10px;
+      align-items:center;
+      justify-content:space-between;
+    }
+    .brand{
+      display:flex;
+      flex-direction:column;
+      gap:2px;
+      line-height:1;
+    }
+    .brand .pqp{
+      font-weight:900;
+      letter-spacing:.06em;
+      font-size:18px;
+    }
+    .brand .tag{
+      font-size:11px;
+      color:var(--muted);
+      letter-spacing:.04em;
+    }
+    .scoreMini{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      max-width:60%;
+    }
+    .pill{
+      display:inline-flex;
+      gap:8px;
+      align-items:center;
+      border:1px solid rgba(255,255,255,.14);
+      border-radius:999px;
+      padding:7px 10px;
+      font-size:12px;
+      color:var(--fg);
+      background: rgba(255,255,255,.05);
+      cursor:pointer;
+      user-select:none;
+    }
+    .pill:active{transform: translateY(1px)}
+    .pill small{color:var(--muted)}
+    main{
+      width:100%;
+      max-width:var(--maxW);
+      padding: 14px var(--pad) 28px;
+      flex:1;
+    }
+    .screen{display:none; animation: fade .18s ease-out}
+    .screen.active{display:block}
+    @keyframes fade{from{opacity:.0; transform:translateY(6px)} to{opacity:1; transform:translateY(0)}}
+    .hero{
+      margin-top:14px;
+      text-align:center;
+    }
+    .hero h1{
+      margin:14px 0 6px;
+      font-size:42px;
+      letter-spacing:.10em;
+      font-weight:900;
+    }
+    .hero h1 span{display:inline-block; padding:0 6px}
+    .hero .sub{
+      margin:0 auto;
+      max-width:34ch;
+      color:var(--muted);
+      font-size:14px;
+      line-height:1.35;
+    }
+    .panel{
+      margin-top:18px;
+      border:1px solid rgba(255,255,255,.10);
+      border-radius:var(--radius);
+      padding:16px;
+      background: rgba(255,255,255,.04);
+    }
+    .row{display:flex; gap:10px}
+    .row > *{flex:1}
+    label{
+      display:block;
+      font-size:12px;
+      color:var(--muted);
+      margin:14px 2px 6px;
+      letter-spacing:.03em;
+      text-transform:uppercase;
+    }
+    input, textarea{
+      width:100%;
+      background: rgba(255,255,255,.06);
+      color:var(--fg);
+      border:1px solid rgba(255,255,255,.14);
+      border-radius:14px;
+      padding:12px 12px;
+      font-size:16px;
+      outline:none;
+    }
+    textarea{min-height:120px; resize:vertical}
+    input:focus, textarea:focus{border-color: rgba(32,201,151,.65); box-shadow: 0 0 0 3px rgba(32,201,151,.15)}
+    .hint{
+      margin:10px 2px 0;
+      font-size:12px;
+      color:var(--muted);
+      line-height:1.4;
+    }
+    .btns{
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      margin-top:16px;
+    }
+    button{
+      width:100%;
+      border:none;
+      border-radius:var(--btnRadius);
+      padding:14px 14px;
+      font-size:16px;
+      font-weight:800;
+      letter-spacing:.02em;
+      cursor:pointer;
+      user-select:none;
+    }
+    button:active{transform: translateY(1px)}
+    .btn-green{background: linear-gradient(180deg,var(--green),var(--green2)); color:#04160F}
+    .btn-red{background: linear-gradient(180deg,var(--red),var(--red2)); color:#fff}
+    .btn-ghost{
+      background: rgba(255,255,255,.06);
+      color:var(--fg);
+      border:1px solid rgba(255,255,255,.14);
+    }
+    .btn-disabled{opacity:.45; pointer-events:none}
+    .list{
+      margin:10px 0 0;
+      padding:0;
+      list-style:none;
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+    }
+    .chip{
+      padding:8px 10px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.05);
+      font-size:13px;
+    }
+    .chip b{font-weight:900}
+    .metaLine{
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      align-items:center;
+      margin-top:10px;
+      color:var(--muted);
+      font-size:12px;
+    }
+    .metaLine strong{color:var(--fg)}
+    /* Cards */
+    .cardWrap{
+      display:flex;
+      justify-content:center;
+      margin: 10px 0 14px;
+    }
+    .card{
+      width:var(--cardW);
+      max-width:var(--cardW);
+      min-height: 240px;
+      border-radius:22px;
+      box-shadow: var(--shadow);
+      overflow:hidden;
+      border: 1px solid rgba(255,255,255,.12);
+      position:relative;
+    }
+    .card.black{
+      background: var(--cardBlack);
+      color: var(--fg);
+      border-color: rgba(255,255,255,.16);
+    }
+    .card.white{
+      background: var(--cardWhite);
+      color: var(--ink);
+      border-color: rgba(0,0,0,.10);
+    }
+    .card .logo{
+      padding:14px 16px 6px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      font-weight:900;
+      letter-spacing:.08em;
+      font-size:14px;
+      opacity:.92;
+    }
+    .card.black .logo{color:rgba(255,255,255,.92)}
+    .card.white .logo{color:rgba(0,0,0,.68)}
+    .card .body{
+      padding: 6px 16px 18px;
+      font-size: clamp(18px, 4.2vw, 26px);
+      line-height:1.25;
+      white-space:pre-wrap;
+      word-wrap:break-word;
+    }
+    .card .foot{
+      position:absolute;
+      bottom:0;
+      left:0;
+      right:0;
+      padding:12px 16px 14px;
+      display:flex;
+      justify-content:space-between;
+      font-size:11px;
+      letter-spacing:.06em;
+      text-transform:uppercase;
+      opacity:.8;
+      border-top:1px solid rgba(255,255,255,.08);
+    }
+    .card.white .foot{border-top:1px solid rgba(0,0,0,.08)}
+    .gridAnswers{
+      margin-top:12px;
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:10px;
+    }
+    .answerCard{
+      border-radius:18px;
+      padding:14px 14px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.04);
+      cursor:pointer;
+      user-select:none;
+    }
+    .answerCard:hover{border-color: rgba(255,255,255,.22)}
+    .answerCard.selected{
+      outline: 3px solid rgba(32,201,151,.45);
+      border-color: rgba(32,201,151,.55);
+      background: rgba(32,201,151,.10);
+    }
+    .answerCard .t{
+      white-space:pre-wrap;
+      line-height:1.25;
+      font-size:16px;
+      color: var(--fg);
+    }
+    .answerCard .s{
+      margin-top:8px;
+      font-size:11px;
+      color: var(--muted);
+      letter-spacing:.04em;
+      text-transform:uppercase;
+    }
+    .divider{height:1px;background:rgba(255,255,255,.10);margin:14px 0}
+    .center{
+      text-align:center;
+    }
+    .bigName{
+      font-size:26px;
+      font-weight:900;
+      letter-spacing:.02em;
+      margin: 6px 0 0;
+    }
+    .badge{
+      display:inline-block;
+      padding:6px 10px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.18);
+      background: rgba(255,255,255,.06);
+      color: var(--muted);
+      font-size:12px;
+      letter-spacing:.04em;
+      text-transform:uppercase;
+    }
+
+    /* Modal placar */
+    .modalBack{
+      position:fixed; inset:0;
+      background: rgba(0,0,0,.70);
+      display:none;
+      align-items:flex-end;
+      justify-content:center;
+      z-index:30;
+    }
+    .modalBack.show{display:flex}
+    .modal{
+      width:min(720px, 100vw);
+      border-radius: 18px 18px 0 0;
+      background: #0F0F0F;
+      border:1px solid rgba(255,255,255,.10);
+      padding: 14px var(--pad) 18px;
+      max-height: 72vh;
+      overflow:auto;
+    }
+    .modal h3{
+      margin:6px 0 8px;
+      font-size:16px;
+      letter-spacing:.06em;
+      text-transform:uppercase;
+    }
+    .rank{
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+      margin-top:10px;
+    }
+    .rankItem{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      padding: 12px 12px;
+      border-radius:16px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.04);
+    }
+    .rankItem .left{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      min-width:0;
+    }
+    .rankItem .pos{
+      width:32px; height:32px;
+      border-radius:12px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-weight:900;
+      background: rgba(255,255,255,.08);
+      border:1px solid rgba(255,255,255,.10);
+      flex:0 0 auto;
+    }
+    .rankItem .nm{
+      font-weight:900;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      white-space:nowrap;
+      max-width: 52vw;
+    }
+    .rankItem .sc{
+      font-weight:900;
+      letter-spacing:.02em;
+    }
+    .leader .pos{outline:2px solid rgba(255,255,255,.25)}
+    .toast{
+      position:fixed;
+      left:50%;
+      transform:translateX(-50%);
+      bottom: 16px;
+      background: rgba(255,255,255,.10);
+      border:1px solid rgba(255,255,255,.14);
+      color: var(--fg);
+      padding:10px 12px;
+      border-radius:999px;
+      font-size:13px;
+      display:none;
+      z-index:40;
+    }
+    .toast.show{display:block; animation: fade .16s ease-out}
+    .tiny{font-size:11px;color:var(--muted);line-height:1.3}
+  </style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <div class="topbar">
+      <div class="brand" role="button" tabindex="0" id="brandBtn" aria-label="Voltar ao início">
+        <div class="pqp">P.Q.P.</div>
+        <div class="tag">pra quem pode</div>
+      </div>
+      <div class="scoreMini">
+        <div class="pill" id="scorePill" title="Abrir placar">
+          <span id="scoreMiniText">Placar</span>
+          <small id="scoreMiniGoal"></small>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- HOME -->
+    <section class="screen active" id="s_home">
+      <div class="hero">
+        <h1><span>P.Q.P.</span></h1>
+        <p class="sub">Pra quem pode. Jogo incrível com alto risco de dependência.</p>
+      </div>
+      <div class="panel">
+        <div class="btns">
+          <button class="btn-green" id="btnNew">NOVO JOGO</button>
+          <button class="btn-ghost" id="btnContinue">CONTINUAR</button>
+          <button class="btn-red" id="btnResetAll">RESETAR TUDO</button>
+        </div>
+        <p class="hint">Versão hotseat: um celular, passa o aparelho. Sem servidor. Sem cadastro. Funciona como site estático.</p>
+      </div>
+    </section>
+
+    <!-- HOST NAME -->
+    <section class="screen" id="s_host">
+      <div class="panel">
+        <div class="center">
+          <span class="badge">Configuração</span>
+          <p class="bigName">Nome do anfitrião</p>
+          <p class="hint">O anfitrião é quem cria a frase da rodada e escolhe a resposta vencedora.</p>
+        </div>
+        <label for="hostName">Nome do anfitrião</label>
+        <input id="hostName" placeholder="Ex.: Thiago" autocomplete="off" />
+        <div class="btns">
+          <button class="btn-green" id="btnHostOk">OK</button>
+          <button class="btn-ghost" id="btnHostBack">VOLTAR</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ADD PLAYERS -->
+    <section class="screen" id="s_players">
+      <div class="panel">
+        <div class="center">
+          <span class="badge">Jogadores</span>
+          <p class="bigName">Adicionar jogadores</p>
+          <p class="hint">Dica: nomes diferentes ajudam. Pode colocar quantos quiser.</p>
+        </div>
+
+        <label for="playerName">Nome do jogador</label>
+        <input id="playerName" placeholder="Ex.: Jogador 001" autocomplete="off" />
+
+        <div class="row">
+          <div>
+            <label for="goalPoints">Pontos para vencer</label>
+            <input id="goalPoints" inputmode="numeric" placeholder="5" value="5" />
+          </div>
+          <div>
+            <label>&nbsp;</label>
+            <button class="btn-ghost" id="btnAutoNames">AUTO (001,002)</button>
+          </div>
+        </div>
+
+        <div class="btns">
+          <button class="btn-ghost" id="btnAddPlayer">PRÓXIMO JOGADOR</button>
+          <button class="btn-green" id="btnStartGame">COMEÇAR JOGO</button>
+          <button class="btn-red" id="btnPlayersReset">RESETAR JOGADORES</button>
+        </div>
+
+        <div class="metaLine">
+          <span>Anfitrião: <strong id="hostPreview">—</strong></span>
+          <span>Jogadores: <strong id="playersCount">0</strong></span>
+        </div>
+
+        <ul class="list" id="playersList"></ul>
+
+        <p class="hint">O anfitrião participa do jogo (e também pode ganhar pontos), mas na rodada dele como anfitrião ele não responde — ele julga.</p>
+      </div>
+    </section>
+
+    <!-- HOST CONFIRM -->
+    <section class="screen" id="s_hostConfirm">
+      <div class="panel center">
+        <span class="badge">Rodada</span>
+        <p class="bigName" id="hostConfirmName">ANFITRIÃO: —</p>
+        <p class="hint">Quando apertar, você vai escrever a frase principal com “…” indicando a lacuna da resposta.</p>
+        <div class="btns">
+          <button class="btn-green" id="btnHostContinue">BORA SEGUIR</button>
+          <button class="btn-ghost" id="btnHostConfirmBack">VOLTAR</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- HOST PROMPT -->
+    <section class="screen" id="s_prompt">
+      <div class="panel">
+        <div class="center">
+          <span class="badge" id="badgeRound">Rodada</span>
+          <p class="bigName" id="promptHostName">ANFITRIÃO: —</p>
+          <p class="hint">Escreva a frase principal. Use <b>…</b> para marcar onde entra a resposta. Ex.: “Quando eu era criança eu amava …”</p>
+        </div>
+
+        <label for="promptText">Frase / Pergunta da rodada</label>
+        <textarea id="promptText" placeholder="Ex.: Na minha cidade, todo mundo que … consegue mais …"></textarea>
+
+        <p class="hint" id="blankHint">Detectado: 1 lacuna (…). Se tiver 2 lacunas, cada jogador responderá 2 campos. Máximo: 2 lacunas.</p>
+
+        <div class="btns">
+          <button class="btn-green" id="btnPromptStart">COMEÇAR JOGO</button>
+          <button class="btn-ghost" id="btnPromptBack">VOLTAR</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- PASS PHONE -->
+    <section class="screen" id="s_pass">
+      <div class="panel center">
+        <span class="badge" id="passBadge">Passe o celular</span>
+        <p class="bigName" id="passToName">—</p>
+        <p class="hint" id="passHint">Quando estiver com o celular na mão, clique no botão.</p>
+        <div class="btns">
+          <button class="btn-green" id="btnPassGo">BORA RESPONDER</button>
+          <button class="btn-ghost" id="btnPassBack">VOLTAR</button>
+        </div>
+        <p class="tiny">Dica de privacidade: vire o celular pra você antes de clicar.</p>
+      </div>
+    </section>
+
+    <!-- PLAYER ANSWER -->
+    <section class="screen" id="s_answer">
+      <div class="cardWrap">
+        <div class="card black" id="blackCard">
+          <div class="logo"><span>👑 P.Q.P.</span><span id="roundSmall">—</span></div>
+          <div class="body" id="blackBody">—</div>
+          <div class="foot"><span id="hostSmall">anfitrião</span><span>pra quem pode</span></div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="center">
+          <span class="badge">Jogador</span>
+          <p class="bigName" id="playerTurnName">—</p>
+        </div>
+
+        <div id="answerFields"></div>
+
+        <div class="btns">
+          <button class="btn-green" id="btnAnswerSend">SEGUIR</button>
+          <button class="btn-ghost" id="btnAnswerBack">VOLTAR</button>
+        </div>
+        <p class="hint">Ao enviar, passe o celular para o próximo jogador.</p>
+      </div>
+    </section>
+
+    <!-- RETURN TO HOST -->
+    <section class="screen" id="s_return">
+      <div class="panel center">
+        <span class="badge">Fim das respostas</span>
+        <p class="bigName">VOLTE PARA O ANFITRIÃO</p>
+        <p class="hint" id="returnHostLine">ANFITRIÃO: —</p>
+        <div class="btns">
+          <button class="btn-green" id="btnReturnHost">JOGAR AGORA</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- JUDGE -->
+    <section class="screen" id="s_judge">
+      <div class="cardWrap">
+        <div class="card black">
+          <div class="logo"><span>👑 P.Q.P.</span><span id="judgeRound">—</span></div>
+          <div class="body" id="judgePrompt">—</div>
+          <div class="foot"><span id="judgeHost">anfitrião</span><span>pra quem pode</span></div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="center">
+          <span class="badge">Anfitrião</span>
+          <p class="bigName" id="judgeHostName">—</p>
+          <p class="hint">Escolha a melhor resposta. As opções estão embaralhadas e anônimas.</p>
+        </div>
+
+        <div class="gridAnswers" id="answersGrid"></div>
+
+        <div class="btns">
+          <button class="btn-green btn-disabled" id="btnWhoWas">QUEM FOI</button>
+          <button class="btn-ghost" id="btnJudgeBack">VOLTAR</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- WINNER REVEAL -->
+    <section class="screen" id="s_reveal">
+      <div class="panel center">
+        <span class="badge">Resultado</span>
+        <p class="bigName" id="winnerLine">—</p>
+        <p class="hint" id="winnerHint">+1 ponto.</p>
+        <div class="divider"></div>
+        <p class="hint" id="nextHostLine">Novo anfitrião: —</p>
+        <div class="btns">
+          <button class="btn-green" id="btnNextRound">PRÓXIMA RODADA</button>
+          <button class="btn-ghost" id="btnViewScore2">VER PLACAR</button>
+          <button class="btn-red" id="btnEndGame">ENCERRAR / RESETAR</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- GAME OVER -->
+    <section class="screen" id="s_over">
+      <div class="panel center">
+        <span class="badge">Fim de jogo</span>
+        <p class="bigName" id="champLine">CAMPEÃO: —</p>
+        <p class="hint" id="overHint">Meta atingida.</p>
+        <div class="btns">
+          <button class="btn-green" id="btnPlayAgain">JOGAR DE NOVO</button>
+          <button class="btn-ghost" id="btnOverScore">VER PLACAR</button>
+          <button class="btn-red" id="btnOverReset">RESETAR TUDO</button>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<!-- SCORE MODAL -->
+<div class="modalBack" id="scoreModal">
+  <div class="modal">
+    <div class="row" style="align-items:center;">
+      <h3 style="margin:6px 0;flex:1;">PLACAR</h3>
+      <button class="btn-ghost" style="padding:10px 12px;border-radius:14px;flex:0 0 auto;" id="btnCloseScore">FECHAR</button>
+    </div>
+    <p class="tiny" id="scoreMeta">—</p>
+    <div class="rank" id="rankList"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+(() => {
+  const $ = (id) => document.getElementById(id);
+
+  const SCREENS = [
+    "s_home","s_host","s_players","s_hostConfirm","s_prompt","s_pass","s_answer","s_return","s_judge","s_reveal","s_over"
+  ];
+  const show = (id) => {
+    for (const s of SCREENS) $(s).classList.remove("active");
+    $(id).classList.add("active");
+    state.ui.screen = id;
+    saveState();
+    renderTopbar();
+  };
+
+  const toastEl = $("toast");
+  let toastTimer = null;
+  const toast = (msg) => {
+    toastEl.textContent = msg;
+    toastEl.classList.add("show");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toastEl.classList.remove("show"), 1800);
+  };
+
+  const STORAGE_KEY = "PQP_HOTSEAT_V1";
+
+  const newState = () => ({
+    ui: { screen: "s_home" },
+    config: {
+      goalPoints: 5,
+      round: 1,
+    },
+    players: [],             // array of names
+    hostIndex: 0,            // index in players[]
+    prompt: "",              // current prompt with ellipses
+    blanks: 1,               // 1 or 2
+    turnOrder: [],           // array of player indices (excluding host)
+    turnPos: 0,              // current position in turnOrder
+    answers: [],             // array of {playerIndex, answers:[...], composedText, anonId}
+    judge: {
+      pool: [],              // array of {anonId, composedText}
+      selectedAnonId: null,
+      winnerIndex: null
+    },
+    scores: {}               // map name -> points
+  });
+
+  let state = newState();
+
+  const saveState = () => {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    } catch (e) {}
+  };
+
+  const loadState = () => {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return null;
+      const s = JSON.parse(raw);
+      return s && typeof s === "object" ? s : null;
+    } catch (e) {
+      return null;
+    }
+  };
+
+  const resetAll = () => {
+    state = newState();
+    try { localStorage.removeItem(STORAGE_KEY); } catch(e){}
+    renderTopbar();
+    show("s_home");
+    toast("Resetado.");
+  };
+
+  // Utils
+  const cleanName = (v) => (v || "").trim().replace(/\s+/g," ");
+  const clampInt = (v, def=5, min=1, max=99) => {
+    const n = parseInt(String(v||"").replace(/[^\d]/g,""),10);
+    if (!Number.isFinite(n)) return def;
+    return Math.max(min, Math.min(max, n));
+  };
+  const countBlanks = (text) => {
+    const m = (text || "").match(/\.\.\./g);
+    const c = m ? m.length : 0;
+    if (c <= 1) return 1;
+    return 2; // maximum 2
+  };
+  const compose = (prompt, answers) => {
+    // Replace up to 2 occurrences of "..." with answers
+    let out = String(prompt || "");
+    for (let i=0;i<answers.length;i++){
+      out = out.replace("...", answers[i] ?? "");
+    }
+    return out;
+  };
+  const shuffle = (arr) => {
+    const a = arr.slice();
+    for (let i=a.length-1;i>0;i--){
+      const j = Math.floor(Math.random()*(i+1));
+      [a[i],a[j]] = [a[j],a[i]];
+    }
+    return a;
+  };
+  const shortScoreLine = () => {
+    const entries = state.players.map(n => ({name:n, score: state.scores[n] ?? 0}));
+    entries.sort((a,b)=> b.score - a.score || a.name.localeCompare(b.name));
+    const top = entries.slice(0,3).map(e => `${e.name} ${e.score}`);
+    const rest = entries.length > 3 ? ` +${entries.length-3}` : "";
+    return entries.length ? (top.join(" • ") + rest) : "Placar";
+  };
+
+  const ensureScores = () => {
+    for (const n of state.players) {
+      if (state.scores[n] == null) state.scores[n] = 0;
+    }
+  };
+
+  const currentHostName = () => state.players[state.hostIndex] ?? "—";
+  const roundLabel = () => `R${state.config.round}`;
+
+  // Topbar / Score modal
+  const scoreModal = $("scoreModal");
+  const openScore = () => {
+    renderScoreModal();
+    scoreModal.classList.add("show");
+  };
+  const closeScore = () => scoreModal.classList.remove("show");
+
+  const renderScoreModal = () => {
+    const rankList = $("rankList");
+    const meta = $("scoreMeta");
+    const goal = state.config.goalPoints || 0;
+    meta.textContent = state.players.length
+      ? `Meta: ${goal} ponto(s) • Rodada: ${state.config.round} • Anfitrião: ${currentHostName()}`
+      : "Sem partida ativa.";
+    rankList.innerHTML = "";
+    const entries = state.players.map(n => ({name:n, score: state.scores[n] ?? 0}));
+    entries.sort((a,b)=> b.score - a.score || a.name.localeCompare(b.name));
+    const leaderScore = entries[0]?.score ?? 0;
+    entries.forEach((e, idx) => {
+      const div = document.createElement("div");
+      div.className = "rankItem" + ((e.score === leaderScore && leaderScore>0) ? " leader" : "");
+      div.innerHTML = `
+        <div class="left">
+          <div class="pos">${idx+1}</div>
+          <div class="nm">${escapeHtml(e.name)}</div>
+        </div>
+        <div class="sc">${e.score}</div>
+      `;
+      rankList.appendChild(div);
+    });
+  };
+
+  const renderTopbar = () => {
+    $("scoreMiniText").textContent = state.players.length ? shortScoreLine() : "Placar";
+    $("scoreMiniGoal").textContent = state.players.length ? `meta ${state.config.goalPoints}` : "";
+  };
+
+  const escapeHtml = (s) =>
+    String(s ?? "")
+      .replaceAll("&","&amp;")
+      .replaceAll("<","&lt;")
+      .replaceAll(">","&gt;")
+      .replaceAll('"',"&quot;")
+      .replaceAll("'","&#039;");
+
+  // Screens render
+  const renderPlayers = () => {
+    $("hostPreview").textContent = currentHostName() === "—" ? (state.players[0] ?? "—") : currentHostName();
+    $("playersCount").textContent = String(state.players.length);
+    const ul = $("playersList");
+    ul.innerHTML = "";
+    state.players.forEach((name, idx) => {
+      const li = document.createElement("li");
+      li.className = "chip";
+      const hostMark = idx === state.hostIndex ? " <b>(HOST)</b>" : "";
+      const sc = state.scores[name] ?? 0;
+      li.innerHTML = `${escapeHtml(name)} <small style="opacity:.8">(${sc})</small>${hostMark}`;
+      ul.appendChild(li);
+    });
+    renderTopbar();
+  };
+
+  const buildTurnOrder = () => {
+    const idxs = state.players.map((_,i)=>i).filter(i=> i !== state.hostIndex);
+    state.turnOrder = idxs;
+    state.turnPos = 0;
+  };
+
+  const setPrompt = (text) => {
+    const t = String(text || "").trim();
+    state.prompt = t;
+    state.blanks = countBlanks(t);
+  };
+
+  const renderPromptHints = () => {
+    const b = state.blanks;
+    $("blankHint").textContent =
+      b === 1
+      ? "Detectado: 1 lacuna (…). Cada jogador terá 1 campo. Máximo: 2 lacunas."
+      : "Detectado: 2 lacunas (…). Cada jogador terá 2 campos (Resposta 1 e 2). Máximo: 2 lacunas.";
+  };
+
+  const renderPass = () => {
+    const idx = state.turnOrder[state.turnPos];
+    const name = state.players[idx] ?? "—";
+    $("passToName").textContent = name;
+    $("passHint").textContent = `Quando ${name} estiver com o celular, clique no botão.`;
+    $("passBadge").textContent = `Passe o celular • ${roundLabel()}`;
+    // Back button: only if already in round and want to go back
+    $("btnPassBack").classList.toggle("btn-disabled", state.turnPos === 0);
+  };
+
+  const renderAnswerScreen = () => {
+    const idx = state.turnOrder[state.turnPos];
+    const playerName = state.players[idx] ?? "—";
+    $("playerTurnName").textContent = playerName;
+    $("blackBody").textContent = state.prompt || "—";
+    $("hostSmall").textContent = `Anfitrião: ${currentHostName()}`;
+    $("roundSmall").textContent = roundLabel();
+
+    const container = $("answerFields");
+    container.innerHTML = "";
+    const b = state.blanks;
+    for (let i=0;i<b;i++){
+      const lab = document.createElement("label");
+      lab.textContent = b === 1 ? "Sua resposta" : `Resposta ${i+1}`;
+      lab.setAttribute("for", `ans_${i}`);
+      const ta = document.createElement("textarea");
+      ta.id = `ans_${i}`;
+      ta.placeholder = b === 1 ? "Digite sua resposta..." : `Digite a resposta ${i+1}...`;
+      ta.autocomplete = "off";
+      container.appendChild(lab);
+      container.appendChild(ta);
+    }
+  };
+
+  const renderReturnHost = () => {
+    $("returnHostLine").textContent = `ANFITRIÃO: ${currentHostName()}`;
+  };
+
+  const renderJudge = () => {
+    $("judgePrompt").textContent = state.prompt || "—";
+    $("judgeHost").textContent = `Anfitrião: ${currentHostName()}`;
+    $("judgeHostName").textContent = currentHostName();
+    $("judgeRound").textContent = roundLabel();
+    const grid = $("answersGrid");
+    grid.innerHTML = "";
+
+    state.judge.selectedAnonId = null;
+    $("btnWhoWas").classList.add("btn-disabled");
+
+    state.judge.pool.forEach((item) => {
+      const div = document.createElement("div");
+      div.className = "answerCard";
+      div.dataset.anon = item.anonId;
+      div.innerHTML = `
+        <div class="t">${escapeHtml(item.composedText)}</div>
+        <div class="s">toque para escolher</div>
+      `;
+      div.addEventListener("click", () => {
+        [...grid.children].forEach(c => c.classList.remove("selected"));
+        div.classList.add("selected");
+        state.judge.selectedAnonId = item.anonId;
+        $("btnWhoWas").classList.remove("btn-disabled");
+        saveState();
+      });
+      grid.appendChild(div);
+    });
+  };
+
+  const renderReveal = () => {
+    const wIdx = state.judge.winnerIndex;
+    const wName = state.players[wIdx] ?? "—";
+    $("winnerLine").textContent = `FOI O(A): ${wName}`;
+    $("winnerHint").textContent = `+1 ponto para ${wName}.`;
+    $("nextHostLine").textContent = `Novo anfitrião: ${wName}`;
+  };
+
+  const renderHostConfirm = () => {
+    $("hostConfirmName").textContent = `ANFITRIÃO: ${currentHostName()}`;
+  };
+
+  const renderPromptScreen = () => {
+    $("promptHostName").textContent = `ANFITRIÃO: ${currentHostName()}`;
+    $("badgeRound").textContent = `Rodada ${state.config.round}`;
+    $("promptText").value = state.prompt || "";
+    renderPromptHints();
+  };
+
+  const renderGameOver = () => {
+    const entries = state.players.map(n => ({name:n, score: state.scores[n] ?? 0}));
+    entries.sort((a,b)=> b.score - a.score || a.name.localeCompare(b.name));
+    const champ = entries[0]?.name ?? "—";
+    $("champLine").textContent = `CAMPEÃO: ${champ}`;
+    $("overHint").textContent = `Meta: ${state.config.goalPoints} • Rodadas: ${state.config.round-1}`;
+  };
+
+  // Flow actions
+  const startNew = () => {
+    state = newState();
+    saveState();
+    renderTopbar();
+    $("hostName").value = "";
+    show("s_host");
+  };
+
+  const continueGame = () => {
+    const loaded = loadState();
+    if (!loaded || !loaded.players) {
+      toast("Nada para continuar.");
+      return;
+    }
+    state = loaded;
+    ensureScores();
+    renderTopbar();
+    // route to screen + re-render essentials
+    routeTo(state.ui.screen || "s_home");
+    toast("Continuando…");
+  };
+
+  const routeTo = (screenId) => {
+    // render before showing to keep UI consistent
+    if (screenId === "s_players") renderPlayers();
+    if (screenId === "s_hostConfirm") renderHostConfirm();
+    if (screenId === "s_prompt") { state.blanks = countBlanks(state.prompt); renderPromptScreen(); }
+    if (screenId === "s_pass") renderPass();
+    if (screenId === "s_answer") renderAnswerScreen();
+    if (screenId === "s_return") renderReturnHost();
+    if (screenId === "s_judge") renderJudge();
+    if (screenId === "s_reveal") renderReveal();
+    if (screenId === "s_over") renderGameOver();
+    show(screenId);
+  };
+
+  const beginRound = () => {
+    state.answers = [];
+    state.judge.pool = [];
+    state.judge.selectedAnonId = null;
+    state.judge.winnerIndex = null;
+    buildTurnOrder();
+    saveState();
+  };
+
+  const submitPlayerAnswer = () => {
+    const idx = state.turnOrder[state.turnPos];
+    const fields = [];
+    for (let i=0;i<state.blanks;i++){
+      const v = (document.getElementById(`ans_${i}`)?.value || "").trim();
+      fields.push(v);
+    }
+    if (fields.some(v => v.length === 0)) {
+      toast("Preencha sua resposta.");
+      return false;
+    }
+    const composedText = compose(state.prompt, fields);
+    const anonId = cryptoSafeId();
+    state.answers.push({playerIndex: idx, answers: fields, composedText, anonId});
+    saveState();
+    return true;
+  };
+
+  const cryptoSafeId = () => {
+    // short random id
+    const a = new Uint8Array(8);
+    (crypto?.getRandomValues ? crypto.getRandomValues(a) : a.forEach((_,i)=>a[i]=Math.floor(Math.random()*256)));
+    return [...a].map(x=>x.toString(16).padStart(2,"0")).join("");
+  };
+
+  const advanceTurn = () => {
+    state.turnPos++;
+    saveState();
+    if (state.turnPos >= state.turnOrder.length) {
+      // done
+      renderReturnHost();
+      show("s_return");
+      return;
+    }
+    renderPass();
+    show("s_pass");
+  };
+
+  const prepareJudgePool = () => {
+    // pool is anonymous and shuffled
+    const pool = state.answers.map(a => ({anonId: a.anonId, composedText: a.composedText}));
+    state.judge.pool = shuffle(pool);
+    state.judge.selectedAnonId = null;
+    saveState();
+  };
+
+  const resolveWinner = () => {
+    const sel = state.judge.selectedAnonId;
+    if (!sel) return false;
+    const found = state.answers.find(a => a.anonId === sel);
+    if (!found) return false;
+    const wIdx = found.playerIndex;
+    state.judge.winnerIndex = wIdx;
+    const wName = state.players[wIdx];
+    state.scores[wName] = (state.scores[wName] ?? 0) + 1;
+    saveState();
+    return true;
+  };
+
+  const applyWinnerAndNext = () => {
+    const wIdx = state.judge.winnerIndex;
+    if (wIdx == null) return;
+    // check game over
+    const wName = state.players[wIdx];
+    const goal = state.config.goalPoints;
+    if ((state.scores[wName] ?? 0) >= goal) {
+      renderGameOver();
+      show("s_over");
+      return;
+    }
+    // winner becomes next host
+    state.hostIndex = wIdx;
+    state.config.round += 1;
+    beginRound();
+    renderHostConfirm();
+    show("s_hostConfirm");
+  };
+
+  // Events
+  $("btnNew").addEventListener("click", startNew);
+  $("btnContinue").addEventListener("click", continueGame);
+  $("btnResetAll").addEventListener("click", resetAll);
+
+  $("btnHostBack").addEventListener("click", () => show("s_home"));
+  $("btnHostOk").addEventListener("click", () => {
+    const host = cleanName($("hostName").value);
+    if (!host) { toast("Digite o nome."); return; }
+    state.players = [host];
+    state.hostIndex = 0;
+    state.config.round = 1;
+    state.prompt = "";
+    state.turnOrder = [];
+    state.turnPos = 0;
+    state.answers = [];
+    state.scores = {};
+    ensureScores();
+    saveState();
+    $("playerName").value = "";
+    $("goalPoints").value = "5";
+    renderPlayers();
+    show("s_players");
+    toast("Anfitrião definido.");
+  });
+
+  $("btnPlayersReset").addEventListener("click", () => {
+    if (!confirm("Resetar jogadores e recomeçar?")) return;
+    const host = state.players[0] ?? "";
+    state = newState();
+    state.players = host ? [host] : [];
+    state.hostIndex = 0;
+    ensureScores();
+    saveState();
+    renderPlayers();
+    toast("Jogadores resetados.");
+  });
+
+  $("btnAutoNames").addEventListener("click", () => {
+    const next = state.players.length; // host is 0, so next player number equals length
+    const name = `Jogador ${String(next).padStart(3,"0")}`;
+    $("playerName").value = name;
+    toast("Nome sugerido.");
+  });
+
+  $("btnAddPlayer").addEventListener("click", () => {
+    const name = cleanName($("playerName").value);
+    if (!name) { toast("Digite o nome do jogador."); return; }
+    state.players.push(name);
+    ensureScores();
+    $("playerName").value = "";
+    saveState();
+    renderPlayers();
+  });
+
+  $("btnStartGame").addEventListener("click", () => {
+    if (state.players.length < 3) { toast("Coloque pelo menos 3 pessoas (incluindo anfitrião)."); return; }
+    state.config.goalPoints = clampInt($("goalPoints").value, 5, 1, 50);
+    $("goalPoints").value = String(state.config.goalPoints);
+    ensureScores();
+    state.config.round = 1;
+    state.hostIndex = 0;
+    beginRound();
+    renderHostConfirm();
+    show("s_hostConfirm");
+  });
+
+  $("btnHostConfirmBack").addEventListener("click", () => {
+    renderPlayers();
+    show("s_players");
+  });
+
+  $("btnHostContinue").addEventListener("click", () => {
+    state.prompt = "";
+    state.blanks = 1;
+    saveState();
+    renderPromptScreen();
+    show("s_prompt");
+  });
+
+  $("promptText").addEventListener("input", () => {
+    setPrompt($("promptText").value);
+    renderPromptHints();
+    saveState();
+  });
+
+  $("btnPromptBack").addEventListener("click", () => {
+    renderHostConfirm();
+    show("s_hostConfirm");
+  });
+
+  $("btnPromptStart").addEventListener("click", () => {
+    const text = ($("promptText").value || "").trim();
+    if (!text) { toast("Escreva a frase."); return; }
+    setPrompt(text);
+    if (!text.includes("...")) {
+      const ok = confirm("Sua frase não tem '...'. Quer adicionar uma lacuna no final automaticamente?");
+      if (ok) {
+        setPrompt(text + " ...");
+        $("promptText").value = state.prompt;
+      } else {
+        toast("Adicione '...' para indicar a lacuna.");
+        return;
+      }
+    }
+    renderPromptHints();
+    // prepare first player
+    state.turnPos = 0;
+    saveState();
+    renderPass();
+    show("s_pass");
+  });
+
+  $("btnPassBack").addEventListener("click", () => {
+    if (state.turnPos <= 0) return;
+    // go back to answer of previous player
+    state.turnPos = Math.max(0, state.turnPos - 1);
+    // also remove last answer if exists (since they are sequential)
+    state.answers.pop();
+    saveState();
+    renderPass();
+    show("s_pass");
+    toast("Voltou um jogador.");
+  });
+
+  $("btnPassGo").addEventListener("click", () => {
+    renderAnswerScreen();
+    show("s_answer");
+  });
+
+  $("btnAnswerBack").addEventListener("click", () => {
+    renderPass();
+    show("s_pass");
+  });
+
+  $("btnAnswerSend").addEventListener("click", () => {
+    if (!submitPlayerAnswer()) return;
+    toast("Enviado. Passe o celular.");
+    advanceTurn();
+  });
+
+  $("btnReturnHost").addEventListener("click", () => {
+    prepareJudgePool();
+    renderJudge();
+    show("s_judge");
+  });
+
+  $("btnJudgeBack").addEventListener("click", () => {
+    // allow host to return to "return" screen
+    show("s_return");
+  });
+
+  $("btnWhoWas").addEventListener("click", () => {
+    if ($("btnWhoWas").classList.contains("btn-disabled")) return;
+    if (!resolveWinner()) { toast("Selecione uma resposta."); return; }
+    renderReveal();
+    show("s_reveal");
+    renderTopbar();
+  });
+
+  $("btnNextRound").addEventListener("click", () => {
+    applyWinnerAndNext();
+  });
+
+  $("btnEndGame").addEventListener("click", () => {
+    if (!confirm("Encerrar e resetar a partida?")) return;
+    resetAll();
+  });
+
+  $("btnPlayAgain").addEventListener("click", () => {
+    // keep same players, reset scores and rounds
+    const players = state.players.slice();
+    state = newState();
+    state.players = players;
+    state.hostIndex = 0;
+    state.config.goalPoints = clampInt(($("goalPoints").value || state.config.goalPoints), 5, 1, 50);
+    state.config.round = 1;
+    state.scores = {};
+    ensureScores();
+    beginRound();
+    renderHostConfirm();
+    show("s_hostConfirm");
+  });
+
+  $("btnOverReset").addEventListener("click", () => {
+    if (!confirm("Resetar tudo?")) return;
+    resetAll();
+  });
+
+  $("btnOverScore").addEventListener("click", openScore);
+  $("btnViewScore2").addEventListener("click", openScore);
+  $("btnCloseScore").addEventListener("click", closeScore);
+  scoreModal.addEventListener("click", (e) => {
+    if (e.target === scoreModal) closeScore();
+  });
+  $("scorePill").addEventListener("click", openScore);
+
+  $("brandBtn").addEventListener("click", () => {
+    // safe "home" only if confirmed
+    if (state.players.length && !confirm("Voltar ao início? A partida fica salva, mas você pode se perder nas telas.")) return;
+    show("s_home");
+  });
+
+  $("btnResetAll").addEventListener("click", () => {
+    if (!confirm("Resetar tudo?")) return;
+    resetAll();
+  });
+
+  $("btnResetAll").addEventListener("click", resetAll);
+
+  // init
+  const init = () => {
+    renderTopbar();
+    const loaded = loadState();
+    if (loaded && loaded.players && loaded.players.length) {
+      $("btnContinue").classList.remove("btn-disabled");
+    }
+    // register SW
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.register("./sw.js").catch(()=>{});
+    }
+  };
+
+  init();
+})();
+</script>
+</body>
+</html>
